@@ -1,0 +1,29 @@
+{{define "footer.html"}}
+<script>
+  document.documentElement.classList.add('dark');
+  if (window.location.hash) {
+    const inputs = document.getElementsByName('rd');
+    for (let i = 0; i < inputs.length; i++) {
+      const idx = inputs[i].value.indexOf('#');
+      if (idx >= 0) {
+        inputs[i].value = inputs[i].value.substr(0, idx);
+      }
+      inputs[i].value += window.location.hash;
+    }
+  }
+</script>
+<footer class="mt-6">
+  {{ $tos := "tos_footer_link" | extra }}
+  {{ if $tos }}
+  <div class="text-center text-pixel-text-muted text-sm p-2">
+    <a href="{{ $tos }}" class="hover:text-pixel-accent">Terms of Service</a>
+  </div>
+  {{ else }}
+  <div class="text-center text-pixel-text-muted text-sm p-2">dex</div>
+  {{ end }}
+</footer>
+</body>
+</html>
+{{end}}
+
+

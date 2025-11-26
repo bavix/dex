@@ -1,0 +1,44 @@
+{{define "login.html"}}
+{{ template "header.html" . }}
+<main class="min-h-screen flex items-center justify-center p-4" style="height:100vh;overflow:auto;">
+  <section class="pixel-box max-w-lg w-full p-6">
+    <header class="text-center mb-6">
+      <h1 class="pixel-text text-3xl font-bold mb-2 text-pixel-text">ACCESS TERMINAL</h1>
+      <p class="text-pixel-text-muted">SELECT IDENTITY PROVIDER</p>
+    </header>
+
+    <div class="space-y-4">
+      {{ if gt (len .Connectors) 0 }}
+        {{ range $c := .Connectors }}
+        <a href="{{ $c.URL }}" class="pixel-button pixel-button-primary w-full flex items-center justify-center p-3">
+          {{ if or (eq $c.Type "google") (eq $c.Type "github") (eq $c.Type "gitlab") (eq $c.Type "oidc") (eq $c.Type "ldap") (eq $c.Type "saml") }}
+          <span class="text-2xl mr-3">
+            {{ if eq $c.Type "google" }}🌐{{ end }}
+            {{ if eq $c.Type "github" }}💻{{ end }}
+            {{ if eq $c.Type "gitlab" }}🚀{{ end }}
+            {{ if eq $c.Type "oidc" }}🔐{{ end }}
+            {{ if eq $c.Type "ldap" }}👥{{ end }}
+            {{ if eq $c.Type "saml" }}🏛️{{ end }}
+          </span>
+          {{ end }}
+          <span class="pixel-text font-bold">{{ $c.Name }}</span>
+        </a>
+        {{ end }}
+      {{ else }}
+        {{ if .ProxyPrefix }}
+        <a href="{{ printf "%s/auth/local" .ProxyPrefix }}" class="pixel-button pixel-button-primary w-full flex items-center justify-center p-3">
+          <span class="pixel-text font-bold">SIGN IN WITH USERNAME</span>
+        </a>
+        {{ else }}
+        <a href="/dex/auth/local" class="pixel-button pixel-button-primary w-full flex items-center justify-center p-3">
+          <span class="pixel-text font-bold">SIGN IN WITH USERNAME</span>
+        </a>
+        {{ end }}
+      {{ end }}
+    </div>
+  </section>
+</main>
+{{ template "footer.html" . }}
+{{end}}
+
+

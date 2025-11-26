@@ -1,0 +1,102 @@
+{{define "error.html"}}
+{{ template "header.html" . }}
+<main class="min-h-screen flex items-center justify-center p-4">
+  <section class="pixel-box max-w-2xl w-full p-8 text-center">
+    {{ $t := printf "%T" . }}
+    {{ if eq $t "map[string]interface {}" }}
+      {{ $sc := index . "StatusCode" }}
+      {{ $title := index . "Title" }}
+      <div class="error-code-number mb-6">{{ if $sc }}{{ $sc }}{{ else }}{{ index . "ErrType" }}{{ end }}</div>
+      <h1 class="pixel-text text-3xl font-bold mb-6 text-pixel-text">{{ if $title }}{{ $title }}{{ else }}ERROR{{ end }}</h1>
+
+      <div class="pixel-box-filled p-6 mb-6 text-left">
+        <div class="mb-4">
+          <strong class="text-pixel-accent">DETAILS:</strong><br>
+          <span class="text-pixel-text">{{ index . "ErrMsg" }}</span>
+        </div>
+        {{ $rp := index . "ReqPath" }}
+        {{ if eq $rp "/dex/auth/local/login" }}
+        <div class="mb-4">
+          <strong class="text-pixel-accent">LOGIN FORM (fallback):</strong>
+        </div>
+        <form method="POST" action="/dex/auth/local/login" class="space-y-6">
+          <input type="hidden" name="rd" value="">
+          <div class="space-y-2">
+            <label class="pixel-label">USERNAME</label>
+            <input class="pixel-input w-full" type="text" name="username" placeholder="ENTER USERNAME" required>
+          </div>
+          <div class="space-y-2">
+            <label class="pixel-label">PASSWORD</label>
+            <input class="pixel-input w-full" type="password" name="password" placeholder="ENTER PASSWORD" required>
+          </div>
+          <div class="flex justify-center">
+            <button type="submit" class="pixel-button pixel-button-primary">LOGIN</button>
+          </div>
+        </form>
+        {{ else }}
+        {{ with $rp }}
+        <div>
+          <strong class="text-pixel-accent">REQUEST PATH:</strong> <span class="text-pixel-text">{{ . }}</span>
+        </div>
+        {{ end }}
+        {{ end }}
+      </div>
+
+      <div class="flex justify-center">
+        {{ $redirect := index . "Redirect" }}
+        {{ $proxyPrefix := index . "ProxyPrefix" }}
+        {{ if $redirect }}
+        <a href="{{ $redirect }}" class="pixel-button pixel-button-primary">RETURN</a>
+        {{ else if $proxyPrefix }}
+        <a href="{{ printf "%s/auth/local" $proxyPrefix }}" class="pixel-button pixel-button-primary">RETURN</a>
+        {{ else }}
+        <a href="/dex/auth/local" class="pixel-button pixel-button-primary">RETURN</a>
+        {{ end }}
+      </div>
+    {{ else }}
+      <div class="error-code-number mb-6">{{ .ErrType }}</div>
+      <h1 class="pixel-text text-3xl font-bold mb-6 text-pixel-text">ERROR</h1>
+
+      <div class="pixel-box-filled p-6 mb-6 text-left">
+        <div class="mb-4">
+          <strong class="text-pixel-accent">DETAILS:</strong><br>
+          <span class="text-pixel-text">{{ .ErrMsg }}</span>
+        </div>
+        {{ if .ReqPath }}
+        <div>
+          <strong class="text-pixel-accent">REQUEST PATH:</strong> <span class="text-pixel-text">{{ .ReqPath }}</span>
+        </div>
+        {{ end }}
+      </div>
+
+      <div class="flex justify-center">
+        <a href="/dex/auth/local" class="pixel-button pixel-button-primary">RETURN</a>
+      </div>
+    {{ end }}
+  </section>
+</main>
+
+<div class="fixed bottom-4 left-4 right-4 text-center">
+  <p class="text-pixel-text-muted text-sm">dex</p>
+</div>
+
+<script>
+  document.documentElement.classList.add('dark');
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggle = document.querySelector('.error-toggle');
+    const details = document.querySelector('.error-details');
+
+    if (toggle && details) {
+      toggle.addEventListener('click', function() {
+        details.classList.toggle('hidden');
+        const icon = this.querySelector('span:last-child');
+        icon.textContent = details.classList.contains('hidden') ? '▶' : '▼';
+      });
+    }
+  });
+</script>
+
+{{ template "footer.html" . }}
+{{end}}
+
+
