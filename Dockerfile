@@ -1,4 +1,4 @@
-FROM dexidp/dex:v2.44.0
+FROM dexidp/dex:v2.45.0
 
 ENV DEX_FRONTEND_DIR=/srv/dex/web
 
